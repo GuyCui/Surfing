@@ -1,6 +1,0 @@
-id=Surfingtile
-name=Surfingtile
-version=v1.0
-versionCode=1
-author=M
-description=This is the status bar tile switch. If the module does not take effect, please manually install the APK by navigating to:/data/adb/modules/Surfingtile/system/app/com.yadli.surfingtile/ and installing the APK manually. 此模块跟随主模块请勿卸载
