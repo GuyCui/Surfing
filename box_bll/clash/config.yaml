@@ -32,11 +32,15 @@ geodata-loader: standard
 geo-auto-update: true
 geo-update-interval: 24
 geox-url:
+  mmdb: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/country.mmdb"
   asn: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/GeoLite2-ASN.mmdb"
 unified-delay: true
 tcp-concurrent: true
 log-level: debug
 find-process-mode: always
+# 外部资源下载的 ETag 支持
+etag-support: true
+global-ua: clash.meta
 global-client-fingerprint: chrome
 external-controller: 0.0.0.0:9093
 external-ui-url: "https://github.com/Zephyruso/zashboard/releases/latest/download/dist.zip"
@@ -71,9 +75,8 @@ p: &p
   interval: 86400
   health-check:
     enable: true
-    #url: https://www.gstatic.com/generate_204
-    url: http://cp.cloudflare.com/generate_204
-    interval: 600
+    url: https://www.gstatic.com/generate_204
+    interval: 60
   proxy: 订阅更新
   header: # 如遇订阅加载不出来请切换ua
       User-Agent:  # 使用注释法由上到下 默认使用第一个
@@ -156,6 +159,13 @@ tun:
 dns:
   enable: true
   ipv6: true
+  use-hosts: true
+  use-system-hosts: true
+  # 阻止 DNS 查询结果的缓存
+  cache-enabled: false
+  cache:
+    enable: false
+    size: 0
   listen: "[::]:53"
   enhanced-mode: fake-ip
   fake-ip-range: 172.20.0.1/16
@@ -218,20 +228,16 @@ proxy_groups: &proxy_groups
       - 🇨🇳 瓦洛兰大陆
     <<: *A
 ai_groups: &ai_groups
-    type: select
+    type: url-test
+    url: 'https://www.gstatic.com/generate_204'
+    interval: 60
+    timeout: 2000
     proxies:
       - 美国节点
       - 日本节点
       - 台湾节点
-      - 延迟最低
-      - ⛔️ 拒绝连接
-      - 故障转移
-      - 负载均衡
-      - 香港节点
       - 狮城节点
       - 其它地区
-      - 🇨🇳 瓦洛兰大陆
-    <<: *A
 CNproxy_groups: &CNproxy_groups
     type: select
     proxies:
@@ -253,9 +259,9 @@ proxy-groups:
   - name: 延迟最低
     icon: "https://raw.githubusercontent.com/MoGuangYu/Surfing/refs/heads/rm/Home/icon/Return.svg"
     type: url-test
-    url: 'http://cp.cloudflare.com/generate_204'
+    url: 'https://www.gstatic.com/generate_204'
     disable-udp: false
-    interval: 600
+    interval: 60
     tolerance: 10
     lazy: false
     timeout: 2000
