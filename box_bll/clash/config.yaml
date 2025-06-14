@@ -290,9 +290,13 @@ proxy-groups:
   - {name: 🎛德国负载均衡策略组, <<: *LoadBalance, filter: *FilterDE}
 
 rules:
+  - AND,((DST-PORT,443),(NETWORK,UDP)),REJECT-DROP
+  # 只拦截油管quic
+  #- AND,((NETWORK,UDP),(DST-PORT,443),(GEOSITE,youtube)),REJECT
   - RULE-SET,ai!cn_domain,AI
   - RULE-SET,ai_domain,AI
   - RULE-SET,openai_domain,AI
+  - DOMAIN-SUFFIX,1password.com,DIRECT
   - RULE-SET,wechat_domain,DIRECT
   - RULE-SET,fakeip-filter,DIRECT
   - RULE-SET,cn_domain,DIRECT
@@ -304,8 +308,8 @@ rules:
   - RULE-SET,alibaba_domain,DIRECT
   - RULE-SET,115_domain,DIRECT
   - RULE-SET,aliyun_domain,DIRECT
-  - RULE-SET,onedrive_domain,DIRECT
-  #- RULE-SET,microsoft_domain,DIRECT
+  - RULE-SET,onedrive_domain,自助选择
+  - RULE-SET,microsoft_domain,自助选择
   - RULE-SET,iptv_domain,DIRECT
   - RULE-SET,private_domain,DIRECT
   - RULE-SET,xiaomi_domain,DIRECT
@@ -405,7 +409,7 @@ rule-providers:
   telegram_domain: { <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/telegram.mrs", path: ./rules/telegram.mrs }
   netflix_domain: { <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/netflix.mrs", path: ./rules/netflix.mrs }
   onedrive_domain: { <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/onedrive.mrs", path: ./rules/onedrive.mrs }
-  #microsoft_domain: { <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/microsoft.mrs", path: ./rules/microsoft.mrs }
+  microsoft_domain: { <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/microsoft.mrs", path: ./rules/microsoft.mrs }
   apple_firmware_domain: { <<: *domain, url: "https://raw.githubusercontent.com/Lanlan13-14/Rules/refs/heads/main/rules/Domain/applefirmware.mrs", path: ./rules/applefirmware.mrs }
   apple_domain: { <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/apple.mrs", path: ./rules/apple.mrs }
   tiktok_domain: { <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/tiktok.mrs", path: ./rules/tiktok.mrs }
