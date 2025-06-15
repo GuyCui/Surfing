@@ -205,34 +205,37 @@ dns:
   fake-ip-filter:
     - "rule-set:fakeip_filter_domain,game_cn_domain,bank_cn_domain,wechat_domain,ai_cn_domain,NetEaseMusic_domain,fcm_domain,alibaba_domain,fcm_domain,media_cn_domain,xiaomi_domain,pt_cn_domain,public-tracker_domain,115_domain,aliyun_domain,direct_domain,apple_cn_domain,apple_firmware_domain,iptv_domain,private_domain,cn_domain,fakeip-filter"
     - '+.cuihome.com'
-
   nameserver-policy:
-    github.akams.cn:
-      - "quic://223.5.5.5"
-      - "quic://223.6.6.6"
+    'geosite:cn':
+       - https://dns.alidns.com/dns-query # DoH
+       - https://doh.pub/dns-query # DoH
+    'geosite:!cn':
+       - https://cloudflare-gateway.com/dns-query
+    'github.akams.cn':
+       - 202.102.128.68
+       - 202.102.134.68
     "+.jp":
-      - "https://public.dns.iij.jp/dns-query#h3=true" # IIJ （日本） DNS over H3
+       - "https://public.dns.iij.jp/dns-query#h3=true" # IIJ （日本） DNS over H3
     "+.hk":
-      - "quic://dns.nextdns.io" # NextDNS（香港） DNS over DOQ
+       - "quic://dns.nextdns.io" # NextDNS（香港） DNS over DOQ
     "+.eu":
-      - "quic://dns0.eu" # 公共（欧洲） DNS over DOQ
+       - "quic://dns0.eu" # 公共（欧洲） DNS over DOQ
     "RULE-SET:Private,China":
-      - "quic://223.5.5.5" # 阿里 DNS over DOQ
-      - "quic://223.6.6.6"
-
+       - 202.102.128.68
+       - 202.102.134.68
+  default-nameserver:
+    - 202.102.128.68
+    - 202.102.134.68
   nameserver:
     - "https://1.1.1.1/dns-query#h3=true" # Cloudflare DNS over H3
-    - "https://1.0.0.1/dns-query#h3=true"
-    - "https://8.8.8.8/dns-query#h3=true" # Google DNS over H3
-    - "https://8.8.4.4/dns-query#h3=true"
-    - "quic://94.140.15.15" # AdGuard DNS over DOQ
-    - "quic://94.140.14.140"
+    - "https://dns.google/dns-query#h3=true" # Google DNS over H3
   proxy-server-nameserver: # 代理节点域名解析服务器，仅用于解析代理节点的域名
-    - "quic://223.5.5.5" # 阿里 DNS over DOQ
-    - "quic://223.6.6.6"
+    - 223.5.5.5
+    - "https://223.5.5.5/dns-query"
+    - "https://1.12.12.12/dns-query"
   direct-nameserver: #  用于直连出口域名解析的 DNS 服务器
-    - "quic://223.5.5.5" # 阿里 DNS over DOQ
-    - "quic://223.6.6.6"
+    - 202.102.128.68
+    - 202.102.134.68
 
 proxies:
   - name: "全球直连"
@@ -290,10 +293,11 @@ proxy-groups:
   - {name: 🎛德国负载均衡策略组, <<: *LoadBalance, filter: *FilterDE}
 
 rules:
-  - AND,((DST-PORT,443),(NETWORK,UDP)),REJECT-DROP
+  #- AND,((DST-PORT,443),(NETWORK,UDP)),REJECT-DROP
   # 只拦截油管quic
-  #- AND,((NETWORK,UDP),(DST-PORT,443),(GEOSITE,youtube)),REJECT
+  - AND,((NETWORK,UDP),(DST-PORT,443),(GEOSITE,youtube)),REJECT
   - RULE-SET,ai!cn_domain,AI
+  - RULE-SET,google-gemini_domain,AI
   - RULE-SET,ai_domain,AI
   - RULE-SET,openai_domain,AI
   - DOMAIN-SUFFIX,1password.com,DIRECT
@@ -448,7 +452,7 @@ rule-providers:
   TVB_domain: { <<: *domain, url: "https://raw.githubusercontent.com/Lanlan13-14/Rules/refs/heads/main/rules/Domain/tvb.mrs", path: ./rules/tvb.mrs }
   game_cn_domain: { <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/category-games%40cn.mrs", path: ./rules/category-games@cn.mrs }
   fakeip_filter_domain: { <<: *domain, url: "https://raw.githubusercontent.com/Lanlan13-14/Rules/refs/heads/main/rules/Domain/fakeip-filter.mrs", path: ./rules/fakeip-filter.mrs }
-
+  google-gemini_domain: { <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/google-gemini.mrs", path: ./rules/google-gemini.mrs }
   bilibili_ip: { <<: *ip, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo-lite/geoip/bilibili.mrs", path: ./rules/bilibili-ip.mrs }
   cn_ip: { <<: *ip, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/cn.mrs", path: ./rules/cn-ip.mrs }
   google_ip: { <<: *ip, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/google.mrs", path: ./rules/google-ip.mrs }
